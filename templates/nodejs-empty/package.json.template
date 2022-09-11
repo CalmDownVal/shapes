@@ -1,0 +1,8 @@
+{
+	"name": "<% ask('PACKAGE_NAME') %>",
+	"version": "1.0.0",
+	"license": "<% ask('LICENSE', 'ISC') %>",
+	"scripts": {
+		"start": "node ./src/index.mjs"
+	}
+}
