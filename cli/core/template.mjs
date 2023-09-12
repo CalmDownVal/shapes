@@ -61,7 +61,6 @@ const DSL = {
 	},
 	ext(context, importPath) {
 		const resolvedPath = resolve(dirname(context.templatePath), importPath);
-		console.log(importPath, 'resolved to', resolvedPath);
 		return expandTemplateAsString(context, resolvedPath);
 	}
 };
