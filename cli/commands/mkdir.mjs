@@ -58,10 +58,18 @@ export default {
 		await mkdir(targetDirPath);
 		await walkFileTree(templateDirPath, {
 			async preVisitDirectory(srcDirPath) {
+				if (!filterIgnored(srcDirPath)) {
+					return false;
+				}
+
 				const dstDirPath = resolve(targetDirPath, relative(templateDirPath, srcDirPath));
 				await mkdir(dstDirPath);
 			},
 			async visitFile(srcFilePath) {
+				if (!filterIgnored(srcFilePath)) {
+					return;
+				}
+
 				const dstFilePath = resolve(targetDirPath, relative(templateDirPath, srcFilePath));
 				if (isTemplate(dstFilePath)) {
 					await expandTemplate(srcFilePath, removeTemplateExtension(dstFilePath));
@@ -78,6 +86,10 @@ export default {
 };
 
 function prettyPrintEntry(entry, prefix = '') {
+	if (!filterIgnored(entry.path)) {
+		return;
+	}
+
 	const isLastEntry = entry.parent
 		? entry.parent.entries[entry.parent.entries.length - 1] === entry
 		: true;
@@ -95,4 +107,13 @@ function prettyPrintEntry(entry, prefix = '') {
 			prettyPrintEntry(childEntry, prefix + (isLastEntry ? '    ' : '│   '));
 		}
 	}
+}
+
+// FUTURE: make this configurable?
+function filterIgnored(path) {
+	const name = basename(path);
+	return !(
+		name === '.git' ||
+		name === '.DS_Store'
+	);
 }
