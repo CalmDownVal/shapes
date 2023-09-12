@@ -55,7 +55,7 @@ export default {
 		}
 
 		// actual FS things happen here
-		await mkdir(targetDirPath);
+		await mkdir(targetDirPath, { recursive: true });
 		await walkFileTree(templateDirPath, {
 			async preVisitDirectory(srcDirPath) {
 				if (!filterIgnored(srcDirPath)) {
