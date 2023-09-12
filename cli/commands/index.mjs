@@ -1,3 +1,4 @@
+import ConfigCommand from './config.mjs';
 import ListCommand from './list.mjs';
 import MkDirCommand from './mkdir.mjs';
 import UpdateCommand from './update.mjs';
@@ -6,8 +7,9 @@ import VersionCommand from './version.mjs';
 import { format, logger } from '../core/logging.mjs';
 
 export const commands = {
-	mkdir: MkDirCommand,
+	config: ConfigCommand,
 	list: ListCommand,
+	mkdir: MkDirCommand,
 	update: UpdateCommand,
 	version: VersionCommand,
 	help: {

@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { homedir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 
-import { FACTORY_REPO } from '../constants.mjs';
+import { CONFIG_PATH, FACTORY_REPO } from '../constants.mjs';
 import { walkFileTree } from './fs-tree.mjs';
 import { logger } from './logging.mjs';
 
@@ -34,7 +34,7 @@ export async function getVersion(repository = FACTORY_REPO) {
 		const lastLine = Math.max(tags.lastIndexOf('\n'), 0);
 		return tags.slice(lastLine);
 	}
-	catch (_ex) {
+	catch {
 		return 'unknown';
 	}
 }
@@ -42,12 +42,12 @@ export async function getVersion(repository = FACTORY_REPO) {
 export async function listKnownTemplates(options) {
 	let repositories = [ FACTORY_REPO ];
 	try {
-		const { default: config } = await import('../../shapes-config.mjs');
+		const { default: config } = await import(CONFIG_PATH);
 		if (Array.isArray(config)) {
 			repositories = repositories.concat(config);
 		}
 	}
-	catch (_ex) {
+	catch {
 		// config likely missing
 	}
 
@@ -66,6 +66,7 @@ export async function listKnownTemplates(options) {
 					list.push(dirPath);
 				}
 
+				// do not recurse into deeper dirs
 				return false;
 			}
 		});
