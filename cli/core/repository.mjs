@@ -17,7 +17,13 @@ export async function syncWithRemote(repository = FACTORY_REPO) {
 	try {
 		const currentBranch = await execGit(repository, 'git rev-parse --abbrev-ref HEAD');
 		if (currentBranch !== repository.main) {
-			logger.warn(`Repository '${repository.path}' is not on the main branch '${repository.main}'; Update skipped.`);
+			logger.warn(`Parent repository of '${repository.path}' is not on the main branch '${repository.main}'; Update skipped.`);
+			return;
+		}
+
+		const localChangesList = await execGit(repository, 'git status --porcelain');
+		if (localChangesList !== '') {
+			logger.warn(`Parent repository of '${repository.path}' contains uncommitted changes; Update skipped.`);
 			return;
 		}
 
