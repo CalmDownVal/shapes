@@ -13,7 +13,7 @@ export const commands = {
 	update: UpdateCommand,
 	version: VersionCommand,
 	help: {
-		description: 'Show help.',
+		description: 'Shows the shapes command help page.',
 		exec() {
 			logger.log(format.underline('General Usage:'));
 			logger.log(format.bold('shapes [<options>] <command> [<args>]'));

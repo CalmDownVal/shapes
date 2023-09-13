@@ -1,5 +1,5 @@
 import { copyFile, mkdir } from 'node:fs/promises';
-import { basename, relative, resolve, sep as DIR_SEPARATOR } from 'node:path';
+import { basename, join, relative, resolve, sep as DIR_SEPARATOR } from 'node:path';
 
 import { askYesNo } from '../core/cli.mjs';
 import { getFileTree, walkFileTree } from '../core/fs-tree.mjs';
@@ -8,7 +8,7 @@ import { listKnownTemplates } from '../core/repository.mjs';
 import { expandTemplate, isTemplate, removeTemplateExtension } from '../core/template.mjs';
 
 export default {
-	description: 'Setup a new directory using a template.',
+	description: 'Sets up a new directory using a template.',
 	args: [
 		{ name: 'template' },
 		{ name: 'dirname' }
@@ -62,7 +62,7 @@ export default {
 					return false;
 				}
 
-				const dstDirPath = resolve(targetDirPath, relative(templateDirPath, srcDirPath));
+				const dstDirPath = join(targetDirPath, relative(templateDirPath, srcDirPath));
 				await mkdir(dstDirPath);
 			},
 			async visitFile(srcFilePath) {
@@ -70,7 +70,7 @@ export default {
 					return;
 				}
 
-				const dstFilePath = resolve(targetDirPath, relative(templateDirPath, srcFilePath));
+				const dstFilePath = join(targetDirPath, relative(templateDirPath, srcFilePath));
 				if (isTemplate(dstFilePath)) {
 					await expandTemplate(srcFilePath, removeTemplateExtension(dstFilePath));
 				}

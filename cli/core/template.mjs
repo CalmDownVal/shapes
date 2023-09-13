@@ -1,5 +1,5 @@
 import { readFile, realpath, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { TEMPLATE_FILE_EXT } from '../constants.mjs';
 import { ask } from './cli.mjs';
@@ -60,7 +60,7 @@ const DSL = {
 		return defaultValue;
 	},
 	ext(context, importPath) {
-		const resolvedPath = resolve(dirname(context.templatePath), importPath);
+		const resolvedPath = join(dirname(context.templatePath), importPath);
 		return expandTemplateAsString(context, resolvedPath);
 	}
 };

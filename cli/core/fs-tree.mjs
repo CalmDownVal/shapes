@@ -1,5 +1,5 @@
 import { opendir, readlink, stat } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 
 /*
 interface FileVisitor {
@@ -66,7 +66,7 @@ async function visitEntry(parentDirPath, entryPath, entry, visitor) {
 	}
 	else if (entry.isSymbolicLink()) {
 		const linkTarget = await readlink(entryPath);
-		const targetPath = resolve(parentDirPath, linkTarget);
+		const targetPath = join(parentDirPath, linkTarget);
 		const targetEntry = await stat(targetPath);
 		await visitEntry(parentDirPath, entryPath, targetEntry, visitor);
 	}
