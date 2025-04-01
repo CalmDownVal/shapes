@@ -1,10 +1,10 @@
-import { spawn } from 'node:child_process';
-import { homedir } from 'node:os';
-import { basename, join, resolve } from 'node:path';
+import { spawn } from "node:child_process";
+import { homedir } from "node:os";
+import { basename, join, resolve } from "node:path";
 
-import { CONFIG_PATH, FACTORY_REPO } from '../constants.mjs';
-import { walkFileTree } from './fs-tree.mjs';
-import { logger } from './logging.mjs';
+import { CONFIG_PATH, FACTORY_REPO } from "../constants.mjs";
+import { walkFileTree } from "./fs-tree.mjs";
+import { logger } from "./logging.mjs";
 
 /**
  * @typedef {object} RepositoryInfo
@@ -21,19 +21,19 @@ import { logger } from './logging.mjs';
  */
 export async function syncWithRemote(repository = FACTORY_REPO) {
 	try {
-		const currentBranch = await execGit(repository, 'git rev-parse --abbrev-ref HEAD');
+		const currentBranch = await execGit(repository, "git rev-parse --abbrev-ref HEAD");
 		if (currentBranch !== repository.main) {
 			logger.warn(`Parent repository of '${repository.path}' is not on the main branch '${repository.main}'; Update skipped.`);
 			return;
 		}
 
-		const localChangesList = await execGit(repository, 'git status --porcelain');
-		if (localChangesList !== '') {
+		const localChangesList = await execGit(repository, "git status --porcelain");
+		if (localChangesList !== "") {
 			logger.warn(`Parent repository of '${repository.path}' contains uncommitted changes; Update skipped.`);
 			return;
 		}
 
-		await execGit(repository, 'git pull');
+		await execGit(repository, "git pull");
 	}
 	catch (ex) {
 		logger.warn(`Failed to synchronize repository ${repository.path}: ${ex.message}`);
@@ -48,11 +48,11 @@ export async function syncWithRemote(repository = FACTORY_REPO) {
 export async function getVersion(repository = FACTORY_REPO) {
 	try {
 		const tags = await execGit(repository, `git tag --sort=version:refname --merged=${repository.main}`);
-		const lastLine = Math.max(tags.lastIndexOf('\n'), 0);
+		const lastLine = Math.max(tags.lastIndexOf("\n"), 0);
 		return tags.slice(lastLine);
 	}
 	catch {
-		return 'unknown';
+		return "unknown";
 	}
 }
 
@@ -84,7 +84,7 @@ export async function listKnownTemplates(options) {
 		await walkFileTree(expandTilde(repository.path), {
 			preVisitDirectory(dirPath) {
 				const name = basename(dirPath);
-				if (!name.startsWith('.')) {
+				if (!name.startsWith(".")) {
 					list.push(dirPath);
 				}
 
@@ -102,26 +102,26 @@ async function execGit(repository, command) {
 	return gitOutput.trim();
 }
 
-function exec(commandOrVerbs, cwd = '') {
+function exec(commandOrVerbs, cwd = "") {
 	return new Promise((execResolve, execReject) => {
-		const verbs = typeof commandOrVerbs === 'string'
+		const verbs = typeof commandOrVerbs === "string"
 			? commandOrVerbs.split(/\s+/)
 			: commandOrVerbs;
 
 		const proc = spawn(verbs[0], verbs.slice(1), {
 			cwd: resolve(process.cwd(), cwd),
-			stdio: [ 'ignore', 'pipe', 'ignore' ]
+			stdio: [ "ignore", "pipe", "ignore" ]
 		});
 
 		const outputChunks = [];
-		proc.stdout.on('data', chunk => {
+		proc.stdout.on("data", chunk => {
 			outputChunks.push(chunk);
 		});
 
-		proc.on('error', execReject);
-		proc.on('exit', code => {
+		proc.on("error", execReject);
+		proc.on("exit", code => {
 			if (code === 0) {
-				const output = Buffer.concat(outputChunks).toString('utf8');
+				const output = Buffer.concat(outputChunks).toString("utf8");
 				execResolve(output);
 			}
 			else {
@@ -132,5 +132,7 @@ function exec(commandOrVerbs, cwd = '') {
 }
 
 function expandTilde(path) {
-	return path.startsWith('~') ? join(homedir(), path.slice(1)) : path;
+	return path.startsWith("~")
+		? join(homedir(), path.slice(1))
+		: path;
 }

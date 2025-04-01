@@ -29,9 +29,9 @@ format:
 ```js
 export default [
   {
-    path: '~/source/my-shapes-repo', // path to the repository
-    main: 'master' // the name of the main branch
-  }
+    path: "~/source/my-shapes-repo", // path to the repository
+    main: "master", // the name of the main branch
+  },
   // multiple repositories can be listed
   // ...
 ];
@@ -65,8 +65,8 @@ Example template:
 
 ```txt
 {
-  "name": "<% ask('PACKAGE_NAME') %>",
+  "name": "<% ask("PACKAGE_NAME") %>",
   "version": "1.0.0",
-  "license": "<% ask('PACKAGE_LICENSE', 'ISC') %>"
+  "license": "<% ask("PACKAGE_LICENSE", "ISC") %>"
 }
 ```

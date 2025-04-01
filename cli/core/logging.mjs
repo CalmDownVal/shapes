@@ -1,19 +1,19 @@
-function error(message = '') {
-	log(color.red(`${bold('Error')}: ${message}`));
+function error(message = "") {
+	log(color.red(`${bold("Error")}: ${message}`));
 }
 
-function warn(message = '') {
-	log(color.yellow(`${bold('Warning')}: ${message}`));
+function warn(message = "") {
+	log(color.yellow(`${bold("Warning")}: ${message}`));
 }
 
-function log(message = '') {
-	process.stdout.write(message + '\n');
+function log(message = "") {
+	process.stdout.write(message + "\n");
 }
 
 export const logger = Object.freeze({
 	error,
 	log,
-	warn
+	warn,
 });
 
 
@@ -38,5 +38,5 @@ function underline(message) {
 export const format = Object.freeze({
 	color,
 	bold,
-	underline
+	underline,
 });

@@ -1,4 +1,4 @@
-import { createInterface } from 'node:readline';
+import { createInterface } from "node:readline";
 
 /**
  * Describes an argument of a command.
@@ -27,7 +27,7 @@ const RE_OPTION = /^-([a-z0-9]+)|--([a-z0-9]+(?:-[a-z0-9]+)*)(?:=(.*))?$/i;
 export function parseOptions(optionDefs, args) {
 	const result = {
 		args: args.slice(),
-		options: {}
+		options: {},
 	};
 
 	const requiredKeys = [];
@@ -44,13 +44,13 @@ export function parseOptions(optionDefs, args) {
 	for (const key in optionDefs) {
 		const definition = {
 			...optionDefs[key],
-			key
+			key,
 		};
 
 		// Map all aliases of the current option.
 		for (const alias of definition.long ?? []) {
 			if (alias.length === 0) {
-				throw new Error('Command alias must not be an empty string.');
+				throw new Error("Command alias must not be an empty string.");
 			}
 
 			if (optionMap[alias]) {
@@ -88,7 +88,7 @@ export function parseOptions(optionDefs, args) {
 
 	let i = 0;
 	while (i < result.args.length) {
-		if (result.args[i] === '--') {
+		if (result.args[i] === "--") {
 			break;
 		}
 
@@ -179,7 +179,7 @@ export function parseOptions(optionDefs, args) {
  */
 export function mapArgs(argDefs, args) {
 	if (argDefs.length < args.length) {
-		throw new Error('Too many arguments.');
+		throw new Error("Too many arguments.");
 	}
 
 	const count = Math.min(argDefs.length, args.length);
@@ -189,7 +189,7 @@ export function mapArgs(argDefs, args) {
 	while (i < count) {
 		const definition = argDefs[i];
 		// if (!definition.isOptional && i !== 0 && argDefs[i - 1].isOptional) {
-		// 	throw new Error('Required arguments must not be preceded by optional arguments.');
+		// 	throw new Error("Required arguments must not be preceded by optional arguments.");
 		// }
 
 		argMap[definition.name] = args[i];
@@ -219,10 +219,10 @@ export function ask(prompt, validator) {
 	return new Promise(resolve => {
 		const rl = createInterface({
 			input: process.stdin,
-			output: process.stdout
+			output: process.stdout,
 		});
 
-		rl.on('line', input => {
+		rl.on("line", input => {
 			if (validator?.(input) === false) {
 				process.stdout.write(prompt);
 				return;
@@ -242,5 +242,9 @@ export function ask(prompt, validator) {
  * @returns {Promise<boolean>} The user's answer.
  */
 export function askYesNo(prompt) {
-	return ask(`${prompt} [y/n]: `, answer => /^[yn]$/i.test(answer)).then(answer => /^[yY]$/.test(answer));
+	return ask(
+		`${prompt} [y/n]: `,
+		answer => /^[yYnN]$/.test(answer),
+	)
+		.then(answer => /^[yY]$/.test(answer));
 }

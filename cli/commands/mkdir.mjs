@@ -1,24 +1,24 @@
-import { copyFile, mkdir } from 'node:fs/promises';
-import { basename, join, relative, resolve, sep as DIR_SEPARATOR } from 'node:path';
+import { copyFile, mkdir } from "node:fs/promises";
+import { basename, join, relative, resolve, sep as DIR_SEPARATOR } from "node:path";
 
-import { askYesNo } from '../core/cli.mjs';
-import { getFileTree, walkFileTree } from '../core/fs-tree.mjs';
-import { format, logger } from '../core/logging.mjs';
-import { listKnownTemplates } from '../core/repository.mjs';
-import { expandTemplate, isTemplate, removeTemplateExtension } from '../core/template.mjs';
+import { askYesNo } from "../core/cli.mjs";
+import { getFileTree, walkFileTree } from "../core/fs-tree.mjs";
+import { format, logger } from "../core/logging.mjs";
+import { listKnownTemplates } from "../core/repository.mjs";
+import { expandTemplate, isTemplate, removeTemplateExtension } from "../core/template.mjs";
 
 export default {
-	description: 'Sets up a new directory using a template.',
+	description: "Sets up a new directory using a template.",
 	args: [
-		{ name: 'template' },
-		{ name: 'dirname' }
+		{ name: "template" },
+		{ name: "dirname" },
 	],
 	options: {
 		previewDisabled: {
-			long: [ 'force' ],
-			short: [ 'f' ],
-			description: 'Force run without preview.'
-		}
+			long: [ "force" ],
+			short: [ "f" ],
+			description: "Force run without preview.",
+		},
 	},
 	async exec({ options, args }) {
 		const targetDirPath = resolve(args.dirname);
@@ -41,7 +41,7 @@ export default {
 
 		// preview / dry run
 		if (!options.previewDisabled) {
-			logger.log(format.underline('Result Preview:'));
+			logger.log(format.underline("Result Preview:"));
 			logger.log();
 
 			const tree = await getFileTree(templateDirPath);
@@ -49,7 +49,7 @@ export default {
 			prettyPrintEntry(tree);
 
 			logger.log();
-			if (!await askYesNo('Do you wish to continue?')) {
+			if (!await askYesNo("Do you wish to continue?")) {
 				return;
 			}
 		}
@@ -81,11 +81,11 @@ export default {
 		});
 
 		logger.log();
-		logger.log(format.color.green('Finished!'));
-	}
+		logger.log(format.color.green("Finished!"));
+	},
 };
 
-function prettyPrintEntry(entry, prefix = '') {
+function prettyPrintEntry(entry, prefix = "") {
 	if (!filterIgnored(entry.path)) {
 		return;
 	}
@@ -101,10 +101,10 @@ function prettyPrintEntry(entry, prefix = '') {
 			: format.color.blue(name);
 	}
 
-	logger.log(format.color.gray(prefix + (isLastEntry ? '└── ' : '├── ')) + format.bold(name));
+	logger.log(format.color.gray(prefix + (isLastEntry ? "└── " : "├── ")) + format.bold(name));
 	if (entry.kind === "directory") {
 		for (const childEntry of entry.entries) {
-			prettyPrintEntry(childEntry, prefix + (isLastEntry ? '    ' : '│   '));
+			prettyPrintEntry(childEntry, prefix + (isLastEntry ? "    " : "│   "));
 		}
 	}
 }
@@ -113,7 +113,7 @@ function prettyPrintEntry(entry, prefix = '') {
 function filterIgnored(path) {
 	const name = basename(path);
 	return !(
-		name === '.git' ||
-		name === '.DS_Store'
+		name === ".git" ||
+		name === ".DS_Store"
 	);
 }

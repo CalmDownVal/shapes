@@ -1,9 +1,9 @@
-import { readFile, realpath, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile, realpath, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
-import { TEMPLATE_FILE_EXT } from '../constants.mjs';
-import { ask } from './cli.mjs';
-import { format } from './logging.mjs';
+import { TEMPLATE_FILE_EXT } from "../constants.mjs";
+import { ask } from "./cli.mjs";
+import { format } from "./logging.mjs";
 
 /**
  * Checks whether a file path is considered a template.
@@ -47,7 +47,7 @@ const RE_END = /%>/g;
 const GLOBAL_CONTEXT = {
 	askVars: {},
 	envVars: { ...process.env },
-	templatePath: ''
+	templatePath: "",
 };
 
 const DSL = {
@@ -78,7 +78,7 @@ const DSL = {
 	ext(context, importPath) {
 		const resolvedPath = join(dirname(context.templatePath), importPath);
 		return expandTemplateAsString(context, resolvedPath);
-	}
+	},
 };
 
 async function expandTemplateAsString(parentContext, path) {
@@ -88,18 +88,18 @@ async function expandTemplateAsString(parentContext, path) {
 
 	// Templates are very unlikely to be larger than a few kB, so we can cram it
 	// all into a string without losing much sleep about it.
-	const template = await readFile(templatePath, 'utf8');
+	const template = await readFile(templatePath, "utf8");
 	if (!isTemplate(path)) {
 		return template;
 	}
 
 	const context = {
 		...parentContext,
-		templatePath
+		templatePath,
 	};
 
 	let anchor = 0;
-	let result = '';
+	let result = "";
 
 	while (true) {
 		// find a starting tag
@@ -113,7 +113,7 @@ async function expandTemplateAsString(parentContext, path) {
 		RE_END.lastIndex = startMatch.index + startMatch[0].length;
 		const endMatch = RE_END.exec(template);
 		if (!endMatch) {
-			throw new Error('Expected a closing tag %>');
+			throw new Error("Expected a closing tag %>");
 		}
 
 		// expand the macro & append contents
@@ -128,5 +128,8 @@ async function expandTemplateAsString(parentContext, path) {
 function expandMacro(context, js) {
 	// the ugly and dangerous...
 	const keys = Object.keys(DSL);
-	return (new Function(...keys, `return ${js};`)).apply(null, keys.map(key => DSL[key].bind(null, context)));
+	return (new Function(...keys, `return ${js};`)).apply(
+		null,
+		keys.map(key => DSL[key].bind(null, context)),
+	);
 }

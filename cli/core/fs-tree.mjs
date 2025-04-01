@@ -1,5 +1,5 @@
-import { opendir, readlink, stat } from 'node:fs/promises';
-import { join } from 'node:path';
+import { opendir, readlink, stat } from "node:fs/promises";
+import { join } from "node:path";
 
 /**
  * @callback PreVisitDirectoryCallback

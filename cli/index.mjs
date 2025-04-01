@@ -1,6 +1,6 @@
-import { commands, options } from './commands/index.mjs';
-import { mapArgs, parseOptions } from './core/cli.mjs';
-import { logger } from './core/logging.mjs';
+import { commands, options } from "./commands/index.mjs";
+import { mapArgs, parseOptions } from "./core/cli.mjs";
+import { logger } from "./core/logging.mjs";
 
 export async function main(args = process.argv.slice(2)) {
 	try {
@@ -9,7 +9,7 @@ export async function main(args = process.argv.slice(2)) {
 
 		await command.exec({
 			args: mapArgs(command.args ?? [], cli.args.slice(1)),
-			options: cli.options
+			options: cli.options,
 		});
 	}
 	catch (ex) {
