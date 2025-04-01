@@ -1,4 +1,4 @@
-import { basename, dirname, sep as DIR_SEPARATOR } from "node:path";
+import { basename, dirname, sep as SEP } from "node:path";
 
 import { format, logger } from "../core/logging.mjs";
 import { listKnownTemplates } from "../core/repository.mjs";
@@ -14,7 +14,7 @@ export default {
 				logger.log(format.underline("Available Templates"));
 			}
 
-			logger.log(`∙ ${format.color.gray(dirname(template) + DIR_SEPARATOR)}${format.bold(basename(template))}`);
+			logger.log(`∙ ${format.color.gray(dirname(template) + SEP)}${format.bold(basename(template))}`);
 		}
 
 		logger.log();

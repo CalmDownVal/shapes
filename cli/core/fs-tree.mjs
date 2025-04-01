@@ -1,5 +1,5 @@
 import { opendir, readlink, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 /**
  * @callback PreVisitDirectoryCallback
@@ -64,6 +64,9 @@ export async function walkFileTree(dirPath, visitor, isFirst = true) {
  * @typedef {FileNode | DirectoryNode} FileTreeNode
  */
 
+export const K_DIRECTORY = "directory";
+export const K_FILE = "file";
+
 /**
  * Gathers the nested structure of a directory and its contents.
  * @param {string} rootDirPath - Path to the directory to scan.
@@ -71,7 +74,7 @@ export async function walkFileTree(dirPath, visitor, isFirst = true) {
  */
 export async function getFileTree(rootDirPath) {
 	const root = {
-		kind: "directory",
+		kind: K_DIRECTORY,
 		path: rootDirPath,
 		parent: null,
 		entries: [],
@@ -81,21 +84,22 @@ export async function getFileTree(rootDirPath) {
 	await walkFileTree(rootDirPath, {
 		preVisitDirectory(childDirPath) {
 			const childDir = {
-				kind: "directory",
+				kind: K_DIRECTORY,
 				path: childDirPath,
 				parent: currentDirNode,
 				entries: [],
 			};
 
-			currentDirNode.entries.unshift(childDir);
+			currentDirNode.entries.push(childDir);
 			currentDirNode = childDir;
 		},
 		postVisitDirectory() {
+			currentDirNode.entries.sort(byTypeAndNameAsc);
 			currentDirNode = currentDirNode.parent;
 		},
 		visitFile(filePath) {
 			currentDirNode.entries.push({
-				kind: "file",
+				kind: K_FILE,
 				path: filePath,
 				parent: currentDirNode,
 			});
@@ -118,4 +122,15 @@ async function visitEntry(parentDirPath, entryPath, entry, visitor) {
 		const targetEntry = await stat(targetPath);
 		await visitEntry(parentDirPath, entryPath, targetEntry, visitor);
 	}
+}
+
+function byTypeAndNameAsc(a, b) {
+	let diff = (
+		(a.kind === K_DIRECTORY ? 0 : 1) -
+		(b.kind === K_DIRECTORY ? 0 : 1)
+	);
+
+	return diff === 0
+		? basename(a.path).localeCompare(basename(b.path))
+		: diff;
 }

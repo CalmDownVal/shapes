@@ -1,8 +1,8 @@
 import { copyFile, mkdir } from "node:fs/promises";
-import { basename, join, relative, resolve, sep as DIR_SEPARATOR } from "node:path";
+import { basename, join, relative, resolve, sep as SEP } from "node:path";
 
 import { askYesNo } from "../core/cli.mjs";
-import { getFileTree, walkFileTree } from "../core/fs-tree.mjs";
+import { getFileTree, K_DIRECTORY, K_FILE, walkFileTree } from "../core/fs-tree.mjs";
 import { format, logger } from "../core/logging.mjs";
 import { listKnownTemplates } from "../core/repository.mjs";
 import { expandTemplate, isTemplate, removeTemplateExtension } from "../core/template.mjs";
@@ -25,7 +25,7 @@ export default {
 
 		// find the template
 		let templateDirPath;
-		if (args.template.includes(DIR_SEPARATOR)) {
+		if (args.template.includes(SEP)) {
 			templateDirPath = resolve(args.template);
 		}
 		else {
@@ -95,14 +95,22 @@ function prettyPrintEntry(entry, prefix = "") {
 		: true;
 
 	let name = entry.parent ? basename(entry.path) : entry.path;
-	if (entry.kind === "file") {
-		name = isTemplate(name)
-			? format.color.green(removeTemplateExtension(name))
-			: format.color.blue(name);
+	switch (entry.kind) {
+		case K_FILE:
+			name = isTemplate(name)
+				? format.color.green(removeTemplateExtension(name))
+				: format.color.blue(name);
+
+			break;
+
+		case K_DIRECTORY:
+			name += SEP;
+			break;
 	}
 
 	logger.log(format.color.gray(prefix + (isLastEntry ? "└── " : "├── ")) + format.bold(name));
-	if (entry.kind === "directory") {
+
+	if (entry.kind === K_DIRECTORY) {
 		for (const childEntry of entry.entries) {
 			prettyPrintEntry(childEntry, prefix + (isLastEntry ? "    " : "│   "));
 		}
