@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { homedir } from "node:os";
 import { basename, join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { CONFIG_PATH, FACTORY_REPO } from "../constants.mjs";
 import { walkFileTree } from "./fs-tree.mjs";
@@ -64,7 +65,8 @@ export async function getVersion(repository = FACTORY_REPO) {
 export async function listKnownTemplates(options) {
 	let repositories = [ FACTORY_REPO ];
 	try {
-		const { default: config } = await import(CONFIG_PATH);
+		const url = pathToFileURL(CONFIG_PATH).href;
+		const { default: config } = await import(url);
 		if (Array.isArray(config)) {
 			repositories = repositories.concat(config);
 		}
