@@ -5,26 +5,42 @@ import { TEMPLATE_FILE_EXT } from '../constants.mjs';
 import { ask } from './cli.mjs';
 import { format } from './logging.mjs';
 
+/**
+ * Checks whether a file path is considered a template.
+ * @param {string} path - The file path to check.
+ * @returns {boolean}
+ */
 export function isTemplate(path) {
 	return path.endsWith(TEMPLATE_FILE_EXT);
 }
 
+/**
+ * Removes the template extension from a template file path, or does nothing if
+ * the path is not a template.
+ * @param {string} path - The file path to modify.
+ * @returns {string}
+ */
 export function removeTemplateExtension(path) {
 	return isTemplate(path) ? path.slice(0, -TEMPLATE_FILE_EXT.length) : path;
 }
 
+/**
+ * Expands a template resolving any placeholders.
+ * @param {string} srcPath - The template file path.
+ * @param {string} dstPath - The destination file path.
+ * @returns {Promise<void>}
+ */
 export async function expandTemplate(srcPath, dstPath) {
 	const result = await expandTemplateAsString(GLOBAL_CONTEXT, srcPath);
 	await writeFile(dstPath, result);
 }
 
-/*
-interface DSLContext {
-	askVars: Record<string, string>;
-	envVars: Record<string, string>;
-	templatePath: string;
-}
-*/
+/**
+ * @typedef {object} DSLContext
+ * @property {object.<string, string>} askVars - Prompted user inputs.
+ * @property {object.<string, string>} envVars - Environment variables.
+ * @property {string} templatePath - Path to the template file being expanded.
+ */
 
 const RE_START = /<%/g;
 const RE_END = /%>/g;

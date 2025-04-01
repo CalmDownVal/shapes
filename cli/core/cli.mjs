@@ -1,22 +1,29 @@
 import { createInterface } from 'node:readline';
 
+/**
+ * Describes an argument of a command.
+ * @typedef {object} OptionDefinition
+ * @property {string[]} [long] - Long name(s) of the option.
+ * @property {string[]} [short] - Short name(s) of the option.
+ * @property {boolean} [hasValue=false] - By default options are boolean flags (set / not set) and are not required. When enabled, options will *require* a string value.
+ * @property {string} [defaultValue] - Sets the default value for this option. Only has effect for options with `hasValue` enabled. When set, options will become optional.
+ */
+
+/**
+ * Holds parsed options and any remaining CLI arguments.
+ * @typedef {object} ParsedOptions
+ * @property {string[]} [args] - Remaining CLI arguments.
+ * @property {object.<string, string|boolean>} [options] - Short name(s) of the option.
+ */
+
 const RE_OPTION = /^-([a-z0-9]+)|--([a-z0-9]+(?:-[a-z0-9]+)*)(?:=(.*))?$/i;
 
-/*
-interface OptionDefinition {
-	long?: string[];
-	short?: string[];
-
-	// By default options are boolean flags (set / not set) and are not required.
-	// When enabled, options will *require* a (string) value.
-	hasValue?: boolean;
-
-	// Only has effect for options with `hasValue` enabled.
-	// When set, options will become optional.
-	defaultValue?: string;
-}
-*/
-
+/**
+ * Parses options from incoming CLI arguments.
+ * @param {OptionDefinition[]} optionDefs - A list of option definitions.
+ * @param {string[]} args - A list of provided CLI arguments to parse.
+ * @returns {ParsedOptions} The parsed options.
+ */
 export function parseOptions(optionDefs, args) {
 	const result = {
 		args: args.slice(),
@@ -152,13 +159,24 @@ export function parseOptions(optionDefs, args) {
 	return result;
 }
 
-/*
-interface ArgumentDefinition {
-	name: string;
-	isOptional?: boolean;
-}
-*/
+/**
+ * Describes an argument of a command.
+ * @typedef {object} ArgumentDefinition
+ * @property {string} name - The name of the argument.
+ * @property {boolean} [isOptional=false] - Controls whether the argument is optional.
+ */
 
+/**
+ * A map of named CLI arguments.
+ * @typedef {object.<string, string>} ArgumentMap
+ */
+
+/**
+ * Maps incoming CLI arguments according to command argument definitions.
+ * @param {ArgumentDefinition[]} argDefs - A list of argument definitions.
+ * @param {string[]} args - A list of provided CLI arguments to map.
+ * @returns {ArgumentMap} The mapped arguments.
+ */
 export function mapArgs(argDefs, args) {
 	if (argDefs.length < args.length) {
 		throw new Error('Too many arguments.');
@@ -185,6 +203,18 @@ export function mapArgs(argDefs, args) {
 	return argMap;
 }
 
+/**
+ * @callback ValidatorCallback
+ * @param {string} value - The value to validate.
+ * @returns {boolean} Whether the value is valid or not.
+ */
+
+/**
+ * Prompts the user for input.
+ * @param {string} prompt - The prompt to display.
+ * @param {ValidatorCallback} [validator] - The validator used to check the user input.
+ * @returns {Promise<string>} The user's answer.
+ */
 export function ask(prompt, validator) {
 	return new Promise(resolve => {
 		const rl = createInterface({
@@ -206,6 +236,11 @@ export function ask(prompt, validator) {
 	});
 }
 
+/**
+ * Prompts the user for a yes/no input.
+ * @param {string} prompt - The prompt to display.
+ * @returns {Promise<boolean>} The user's answer.
+ */
 export function askYesNo(prompt) {
 	return ask(`${prompt} [y/n]: `, answer => /^[yn]$/i.test(answer)).then(answer => /^[yY]$/.test(answer));
 }

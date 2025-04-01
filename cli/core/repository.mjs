@@ -6,13 +6,19 @@ import { CONFIG_PATH, FACTORY_REPO } from '../constants.mjs';
 import { walkFileTree } from './fs-tree.mjs';
 import { logger } from './logging.mjs';
 
-/*
-interface RepositoryInfo {
-	path: string;
-	main: string;
-}
-*/
+/**
+ * @typedef {object} RepositoryInfo
+ * @property {string} path - The path to the repository root.
+ * @property {string} main - The name of the main branch (e.g. master).
+ */
 
+/**
+ * Synchronizes the repository with the latest remote version. Does nothing if
+ * there are any local changes, or the repository is checked out to a different
+ * branch.
+ * @param {RepositoryInfo} [repository] - The repository to synchronize.
+ * @returns {Promise<void>}
+ */
 export async function syncWithRemote(repository = FACTORY_REPO) {
 	try {
 		const currentBranch = await execGit(repository, 'git rev-parse --abbrev-ref HEAD');
@@ -34,6 +40,11 @@ export async function syncWithRemote(repository = FACTORY_REPO) {
 	}
 }
 
+/**
+ * Attempts to detect the latest tagged version of a repository.
+ * @param {RepositoryInfo} [repository] - The repository to check.
+ * @returns {Promise<string>} The detected version.
+ */
 export async function getVersion(repository = FACTORY_REPO) {
 	try {
 		const tags = await execGit(repository, `git tag --sort=version:refname --merged=${repository.main}`);
@@ -45,6 +56,11 @@ export async function getVersion(repository = FACTORY_REPO) {
 	}
 }
 
+/**
+ * Attempts to list all known templates within a repository.
+ * @param {RepositoryInfo} [repository] - The repository to check.
+ * @returns {Promise<string[]>} A list of absolute paths to detected templates.
+ */
 export async function listKnownTemplates(options) {
 	let repositories = [ FACTORY_REPO ];
 	try {

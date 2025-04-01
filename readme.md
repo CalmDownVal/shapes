@@ -12,7 +12,8 @@ your PATH variable:
 echo "export PATH=$(pwd)/bin:\$PATH" >> ~/.zshenv
 ```
 
-Or symlink the appropriate script to where your shell will find it:
+Alternately, you can symlink the appropriate script to where your shell will
+find it:
 
 ```sh
 ln -s $(readlink -f ./bin/shapes) /usr/local/bin/shapes
@@ -50,13 +51,15 @@ repository. They may break or lead to unexpected behavior otherwise.
 ## Template Files
 
 To make a template file, append `.template` after its normal extension. E.g.:
-`package.json.template` to define a template for Node's `package.json` file.
+`package.json.template` to define a template for a `package.json` file.
 
 Template files may contain `<% ... %>` tag pairs with JavaScript code between
 them. This code must evaluate to a string.
 
 - Use the `ask(<varName>, [defaultValue])` function to ask for user input.
-- Use the `env(<varName>, [defaultValue])` function to read environment values.
+- Use the `env(<varName>, [defaultValue])` function to read environment
+  variables.
+- Use the `ext(<templatePath>)` function to expand an external template.
 
 Example template:
 

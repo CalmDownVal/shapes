@@ -15,9 +15,9 @@ export default {
 	],
 	options: {
 		previewDisabled: {
-			long: [ 'no-preview' ],
-			short: [ 'p' ],
-			description: 'Run immediately without preview.'
+			long: [ 'force' ],
+			short: [ 'f' ],
+			description: 'Force run without preview.'
 		}
 	},
 	async exec({ options, args }) {
@@ -95,14 +95,14 @@ function prettyPrintEntry(entry, prefix = '') {
 		: true;
 
 	let name = entry.parent ? basename(entry.path) : entry.path;
-	if (!entry.isDirectory) {
+	if (entry.kind === "file") {
 		name = isTemplate(name)
 			? format.color.green(removeTemplateExtension(name))
 			: format.color.blue(name);
 	}
 
 	logger.log(format.color.gray(prefix + (isLastEntry ? '└── ' : '├── ')) + format.bold(name));
-	if (entry.isDirectory) {
+	if (entry.kind === "directory") {
 		for (const childEntry of entry.entries) {
 			prettyPrintEntry(childEntry, prefix + (isLastEntry ? '    ' : '│   '));
 		}

@@ -10,5 +10,5 @@ export const FACTORY_REPO = {
 	main: 'master'
 };
 
-// the extension used to indicate of template files
+// the extension used to indicate template files
 export const TEMPLATE_FILE_EXT = '.template';
