@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import('../cli/index.mjs').then(cli => cli.main());
+import "../cli/main.mjs";

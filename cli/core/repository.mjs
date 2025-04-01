@@ -48,7 +48,7 @@ export async function syncWithRemote(repository = FACTORY_REPO) {
 export async function getVersion(repository = FACTORY_REPO) {
 	try {
 		const tags = await execGit(repository, `git tag --sort=version:refname --merged=${repository.main}`);
-		const lastLine = Math.max(tags.lastIndexOf("\n"), 0);
+		const lastLine = tags.lastIndexOf("\n") + 1;
 		return tags.slice(lastLine);
 	}
 	catch {

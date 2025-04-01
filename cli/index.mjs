@@ -2,7 +2,7 @@ import { commands, options } from "./commands/index.mjs";
 import { mapArgs, parseOptions } from "./core/cli.mjs";
 import { logger } from "./core/logging.mjs";
 
-export async function main(args = process.argv.slice(2)) {
+export async function main(args) {
 	try {
 		const cli = parseOptions(options, args);
 		const command = commands[cli.args[0]] ?? commands.help;

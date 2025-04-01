@@ -1,3 +1,5 @@
+import { EOL } from "node:os";
+
 function error(message = "") {
 	log(color.red(`${bold("Error")}: ${message}`));
 }
@@ -7,7 +9,7 @@ function warn(message = "") {
 }
 
 function log(message = "") {
-	process.stdout.write(message + "\n");
+	process.stdout.write(message + EOL);
 }
 
 export const logger = Object.freeze({

@@ -1,1 +1,1 @@
-node ../cli/index.mjs $args
+node $PSScriptRoot/../cli/main.mjs $args
